@@ -14,7 +14,7 @@ const WeatherInfo = ({ weatherData }: { weatherData: WeatherData }) => {
 
   return (
     <>
-      <View style={styles.center}>
+      <View style={[styles.center,styles.row,styles.mt20]}>
         <IconSymbol name={{ ios: 'location.fill', android: 'location-enter' }} size={25} />
         <Text style={[styles.cityName, styles.textColor]}>{weatherData.name}</Text>
       </View>
@@ -25,10 +25,12 @@ const WeatherInfo = ({ weatherData }: { weatherData: WeatherData }) => {
       </Card>
       <View style={[styles.row, styles.spaceBetween]}>
         <WeatherDetailCard title="HUMIDITY" value={`${weatherData.main?.humidity}%`} />
+        <View style={[{width:5}]} />
         <WeatherDetailCard title="PRESSURE" value={`${weatherData.main?.pressure} hPa`} />
       </View>
       <View style={[styles.row, styles.spaceBetween]}>
         <WeatherDetailCard title="TEM. MAX" value={`${weatherData.main?.temp_max}°C`} />
+        <View style={[{width:5}]} />
         <WeatherDetailCard title="TEM. MIN" value={`${weatherData.main?.temp_min}°C`} />
       </View>
       <Card containerStyle={styles.cardStyle}>
@@ -86,5 +88,8 @@ const styles = StyleSheet.create({
   humidity: {
     fontSize: 25,
     paddingVertical: 10,
+  },
+  mt20: {
+    marginTop: 20,
   },
 });

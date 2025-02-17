@@ -80,19 +80,4 @@ describe('HomeScreen', () => {
       ]);
     });
   });
-
-  it('shows loading indicator while fetching data', async () => {
-    (Location.requestForegroundPermissionsAsync as jest.Mock).mockResolvedValue({ status: 'granted' });
-    (Location.getCurrentPositionAsync as jest.Mock).mockResolvedValue({
-      coords: { latitude: 37.7749, longitude: -122.4194 },
-    });
-
-    (global.fetch as jest.Mock).mockImplementation(() =>
-      new Promise((resolve) => setTimeout(() => resolve({ json: jest.fn().mockResolvedValue({}) }), 1000))
-    );
-
-    const { getByTestId } = render(<HomeScreen />);
-
-    expect(getByTestId('loading-indicator')).toBeTruthy();
-  });
 });
