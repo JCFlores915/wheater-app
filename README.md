@@ -26,6 +26,14 @@ yarn start
 
 Press `i` in the terminal to run the app on an iOS simulator.
 
+### 4️⃣ Run Tests
+
+Execute the following command to run the test suite:
+
+```bash
+yarn jest
+```
+
 ---
 
 Enjoy coding! ✨
