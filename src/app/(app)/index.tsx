@@ -17,6 +17,7 @@ import { WeatherData } from '@/src/models/api';
 import Card from '@/src/components/core/card.component';
 import IconSymbol from '@/src/components/core/icon-symbols.component';
 import Divider from '@/src/components/divider.component';
+import WeatherInfo from '@/src/components/weather-info.component';
 
 export default function HomeScreen() {
   const { top, bottom } = useSafeAreaInsets();
@@ -68,11 +69,10 @@ export default function HomeScreen() {
       if (status !== 'granted') {
         Alert.alert('', 'Permission to access location is required', [
           {
-            text: 'Cancel',
-            onPress: () => console.log('Cancel Pressed'),
-            style: 'cancel',
+            text: 'Ok',
+            onPress: async () =>
+              await Location.requestForegroundPermissionsAsync(),
           },
-          { text: 'OK', onPress: () => console.log('OK Pressed') },
         ]);
         return;
       }
@@ -102,6 +102,7 @@ export default function HomeScreen() {
         }}
       >
         <ActivityIndicator
+          testID='loading-indicator'
           size='large'
           color='#000'
         />
@@ -109,153 +110,29 @@ export default function HomeScreen() {
     );
   }
 
-  console.log('Weather Data:', !!weatherData.name);
-
   return (
-    <ScrollView
-      contentContainerStyle={{
-        top: top,
-        bottom,
-        paddingHorizontal: 16,
-      }}
-    >
+    <ScrollView contentContainerStyle={{ top, bottom, paddingHorizontal: 16 }}>
       <Hello />
       <SearchComponent
+        inputProps={{
+          placeholder: 'Search',
+          autoCapitalize: 'none',
+          autoCorrect: false,
+          keyboardType: 'default',
+          returnKeyType: 'search',
+          clearButtonMode: 'while-editing',
+          enablesReturnKeyAutomatically: true,
+          onSubmitEditing: () => lazySearchUsers(searchText),
+          blurOnSubmit: true,
+        }}
         onChange={(text) => {
           setSearchText(text);
-          lazySearchUsers(text);
         }}
-        containerStyle={[{ marginBottom: 10 }]}
+        containerStyle={{ marginBottom: 10 }}
         value={searchText}
       />
       {!!weatherData.name ? (
-        <>
-          <View
-            style={[
-              {
-                paddingVertical: 16,
-              },
-            ]}
-          >
-            <View style={[styles.center]}>
-              <IconSymbol
-                name={{ ios: 'location.fill', android: 'location-enter' }}
-                size={25}
-              />
-              <Text style={[styles.cityName, styles.textColor]}>
-                {weatherData.name}
-              </Text>
-            </View>
-            <Text style={[styles.tempText, styles.textColor]}>
-              {weatherData.main?.temp.toFixed(0)}°
-            </Text>
-          </View>
-
-          <Card containerStyle={[styles.cardStyle]}>
-            <Text style={[styles.weatherText, styles.textColor]}>
-              {weatherData.weather?.map((item) => item.description).join(', ')}
-            </Text>
-            <Divider variant='sm' />
-          </Card>
-          <View style={[styles.row, styles.spaceBetween]}>
-            <Card containerStyle={[styles.cardStyle, styles.fill]}>
-              <View style={[styles.row]}>
-                <IconSymbol
-                  name={{ ios: 'humidity.fill', android: 'water-alert' }}
-                />
-                <Text
-                  style={[styles.weatherText, styles.ph6, styles.textColor]}
-                >
-                  HUMIDITY
-                </Text>
-              </View>
-              <Text style={[styles.humidity, styles.textColor]}>
-                {weatherData.main?.humidity}%
-              </Text>
-            </Card>
-            <View style={{ width: 16 }} />
-            <Card containerStyle={[styles.cardStyle, styles.fill]}>
-              <View style={[styles.row]}>
-                <IconSymbol
-                  name={{ ios: 'humidity.fill', android: 'water-alert' }}
-                />
-                <Text
-                  style={[styles.weatherText, styles.ph6, styles.textColor]}
-                >
-                  PRESSURE
-                </Text>
-              </View>
-              <Text style={[styles.humidity, styles.textColor]}>
-                {weatherData.main?.pressure}%
-              </Text>
-            </Card>
-          </View>
-          <View style={[styles.row, styles.spaceBetween]}>
-            <Card containerStyle={[styles.cardStyle, styles.fill]}>
-              <View style={[styles.row]}>
-                <IconSymbol
-                  name={{
-                    ios: 'thermometer.high',
-                    android: 'temperature-celsius',
-                  }}
-                />
-                <Text
-                  style={[styles.weatherText, styles.ph6, styles.textColor]}
-                >
-                  TEM. MAX
-                </Text>
-              </View>
-              <Text style={[styles.humidity, styles.textColor]}>
-                {weatherData.main?.temp_max}%
-              </Text>
-            </Card>
-            <View style={{ width: 16 }} />
-            <Card containerStyle={[styles.cardStyle, styles.fill]}>
-              <View style={[styles.row]}>
-                <IconSymbol
-                  name={{
-                    ios: 'thermometer.low',
-                    android: 'temperature-celsius',
-                  }}
-                />
-                <Text
-                  style={[styles.weatherText, styles.ph6, styles.textColor]}
-                >
-                  TEM. MIN
-                </Text>
-              </View>
-              <Text style={[styles.humidity, styles.textColor]}>
-                {weatherData.main?.temp_min}%
-              </Text>
-            </Card>
-          </View>
-          <Card containerStyle={[styles.cardStyle]}>
-            {/* Velocidad del viento */}
-            <View style={[styles.center]}>
-              <View style={[styles.row]}>
-                <IconSymbol name={{ ios: 'wind', android: 'weather-windy' }} />
-                <Text
-                  style={[styles.weatherText, styles.ph6, styles.textColor]}
-                >
-                  WIND
-                </Text>
-              </View>
-              <View style={[styles.row, styles.spaceBetween, styles.center]}>
-                <Text style={[styles.humidity, styles.textColor]}>Wind </Text>
-                <Text style={[styles.humidity, styles.textColor]}>
-                  {weatherData.wind?.speed} km/h
-                </Text>
-              </View>
-              <View style={[styles.row, styles.spaceBetween, styles.center]}>
-                <Text style={[styles.humidity, styles.textColor]}>Dir </Text>
-                <Text style={[styles.humidity, styles.textColor]}>
-                  {weatherData.wind?.deg} km/h
-                </Text>
-              </View>
-           
-            </View>
-          </Card>
-        </>
+        <WeatherInfo weatherData={weatherData} />
       ) : (
         <View style={[styles.center, styles.fill]}>
           <Text>Something went wrong, please try again later</Text>
@@ -266,54 +143,11 @@ export default function HomeScreen() {
 }
 
 const styles = StyleSheet.create({
-  textColor: {
-    color: '#000',
-  },
-  weatherContainer: {
-    marginTop: 20,
-  },
-  weatherText: {
-    fontSize: 18,
-  },
-  cardStyle: {
-    padding: 16,
-    marginVertical: 16,
-  },
-  cityName: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    textAlign: 'center',
-  },
-  tempText: {
-    fontSize: 50,
-    fontWeight: 'regular',
-    textAlign: 'center',
-  },
-  description: {
-    fontSize: 16,
-    textAlign: 'center',
-  },
   center: {
     alignItems: 'center',
     justifyContent: 'center',
   },
-  row: {
-    flexDirection: 'row',
-  },
-  ph6: {
-    paddingHorizontal: 6,
-  },
-  humidity: {
-    fontSize: 25,
-    paddingVertical: 10,
-  },
-  spaceBetween: {
-    justifyContent: 'space-between',
-  },
   fill: {
     flexGrow: 1,
-  },
-  vertical0: {
-    paddingVertical: 0,
   },
 });

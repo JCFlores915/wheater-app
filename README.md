@@ -14,11 +14,7 @@ Run the following command to install the necessary packages:
 yarn install
 ```
 
-### 2️⃣ Configure Environment Variables
-
-Ensure your environment variables file is correctly named. Add a dot (`.`) at the beginning of the `.env` file so it is recognized properly.
-
-### 3️⃣ Start the App
+### 2️⃣ Start the App
 
 Launch the development server with:
 
@@ -26,7 +22,7 @@ Launch the development server with:
 yarn start
 ```
 
-### 4️⃣ Run on iOS
+### 3️⃣ Run on iOS
 
 Press `i` in the terminal to run the app on an iOS simulator.
 

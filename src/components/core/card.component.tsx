@@ -11,7 +11,7 @@ type Props = PropsWithChildren<{
 const Card: React.FC<Props> = (props): React.ReactNode => {
 
 	return (
-		<View
+		<View testID='card-container'
 			style={StyleSheet.flatten([
 				styles.container,
 				props.containerStyle
